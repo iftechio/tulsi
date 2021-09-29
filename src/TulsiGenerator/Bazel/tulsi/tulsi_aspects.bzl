@@ -769,6 +769,27 @@ def _expanded_copts(ctx, target, copts):
         return None
     return [_process_expanded_copt(ctx, target, c)  for c in copts]
 
+
+def collect_swift_version(copts):
+    """Returns the value of the `-swift-version` argument, if found.
+    Args:
+        copts: The list of copts to be scanned.
+    Returns:
+        The value of the `-swift-version` argument, or None if it was not found
+        in the copt list.
+    """
+
+    # Note that the argument can occur multiple times, and the last one wins.
+    last_swift_version = None
+
+    count = len(copts)
+    for i in range(count):
+        copt = copts[i]
+        if copt == "-swift-version" and i + 1 < count:
+            last_swift_version = copts[i + 1]
+
+    return last_swift_version
+
 def _tulsi_sources_aspect(target, ctx):
     """Extracts information from a given rule, emitting it as a JSON struct."""
     rule = ctx.rule
@@ -913,7 +934,8 @@ def _tulsi_sources_aspect(target, ctx):
     if is_swift_target:
         swift_info = target[SwiftInfo]
         attributes["has_swift_info"] = True
-        transitive_attributes["swift_language_version"] = swift_info.swift_version
+        transitive_attributes["swift_language_version"] = collect_swift_version(
+            copts_attr)
         transitive_attributes["has_swift_dependency"] = True
         swift_defines = swift_info.transitive_defines.to_list()
 
