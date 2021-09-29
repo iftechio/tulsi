@@ -934,8 +934,8 @@ def _tulsi_sources_aspect(target, ctx):
     if is_swift_target:
         swift_info = target[SwiftInfo]
         attributes["has_swift_info"] = True
-        transitive_attributes["swift_language_version"] = collect_swift_version(
-            copts_attr)
+        if copts_attr != None:
+            transitive_attributes["swift_language_version"] = collect_swift_version(copts_attr)
         transitive_attributes["has_swift_dependency"] = True
         defines = {}
         for module in target[SwiftInfo].transitive_modules.to_list():
