@@ -998,6 +998,8 @@ def _tulsi_sources_aspect(target, ctx):
             swift_info = target[SwiftInfo]
             if swift_info.direct_modules:
                 module_name = swift_info.direct_modules[0].name
+            else:
+                module_name = None
         else:
             module_name = None
 
